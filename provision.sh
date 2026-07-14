@@ -5,9 +5,6 @@ echo "============================================"
 echo "  SolarSaaS - Provisionamento do Servidor"
 echo "============================================"
 echo ""
-echo "  Este script prepara um servidor Ubuntu 22.04+"
-echo "  com Docker, Node.js e configura o projeto."
-echo ""
 
 if [ "$EUID" -ne 0 ]; then
     echo "ERRO: Execute como root (sudo ./provision.sh)"
@@ -15,13 +12,13 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 DEPLOY_USER="${1:-deploy}"
-DOMAIN="${2:-app.seudominio.com.br}"
+DOMAIN="agilizesolar.online"
 
 echo "[1/8] Atualizando sistema..."
 apt-get update -qq
 apt-get upgrade -y -qq
 
-echo "[2/8] Instalando dependências..."
+echo "[2/8] Instalando dependencias..."
 apt-get install -y -qq \
     apt-transport-https \
     ca-certificates \
@@ -30,7 +27,8 @@ apt-get install -y -qq \
     lsb-release \
     git \
     ufw \
-    fail2ban
+    fail2ban \
+    unzip
 
 echo "[3/8] Instalando Docker..."
 if ! command -v docker &> /dev/null; then
@@ -48,7 +46,7 @@ if ! command -v node &> /dev/null; then
     apt-get install -y -qq nodejs
 fi
 
-echo "[6/8] Configurando usuário '$DEPLOY_USER'..."
+echo "[6/8] Configurando usuario '$DEPLOY_USER'..."
 if ! id "$DEPLOY_USER" &>/dev/null; then
     useradd -m -s /bin/bash "$DEPLOY_USER"
     usermod -aG docker "$DEPLOY_USER"
@@ -69,37 +67,28 @@ ufw allow 80/tcp
 ufw allow 443/tcp
 ufw --force enable
 
-echo "[8/8] Clonando projeto..."
+echo "[8/8] Criando diretorio do projeto..."
 PROJECT_DIR="/opt/solar-saas"
-if [ ! -d "$PROJECT_DIR" ]; then
-    git clone https://github.com/devandersonjordan/MONITORAMENTO.git "$PROJECT_DIR"
-    chown -R $DEPLOY_USER:$DEPLOY_USER "$PROJECT_DIR"
-fi
+mkdir -p "$PROJECT_DIR"
+chown -R $DEPLOY_USER:$DEPLOY_USER "$PROJECT_DIR"
 
 echo ""
 echo "============================================"
-echo "  Provisionamento concluído!"
+echo "  Provisionamento concluido!"
 echo "============================================"
 echo ""
-echo "  Próximos passos:"
+echo "  Proximos passos:"
 echo ""
-echo "  1. Configure as credenciais:"
+echo "  1. Envie os arquivos do projeto:"
+echo "     scp -r ./* $DEPLOY_USER@77.37.43.179:$PROJECT_DIR/"
+echo ""
+echo "  2. Acesse o servidor:"
+echo "     ssh $DEPLOY_USER@77.37.43.179"
+echo ""
+echo "  3. Configure as senhas:"
 echo "     cd $PROJECT_DIR"
-echo "     cp backend/.env.example backend/.env.production"
 echo "     nano backend/.env.production"
 echo ""
-echo "  2. Atualize o domínio no nginx:"
-echo "     sed -i 's/app.seudominio.com.br/$DOMAIN/g' nginx/production.conf"
-echo ""
-echo "  3. Rode o deploy:"
-echo "     su - $DEPLOY_USER"
-echo "     cd $PROJECT_DIR"
+echo "  4. Rode o deploy:"
 echo "     ./deploy.sh"
-echo ""
-echo "  4. Configure SSL:"
-echo "     docker compose -f docker-compose.production.yml run --rm certbot \\"
-echo "       certonly --webroot --webroot-path=/var/www/certbot -d $DOMAIN"
-echo ""
-echo "  5. Configure o cron de renovação SSL:"
-echo "     echo '0 3 * * * cd $PROJECT_DIR && docker compose -f docker-compose.production.yml run --rm certbot renew' | crontab -"
 echo ""
