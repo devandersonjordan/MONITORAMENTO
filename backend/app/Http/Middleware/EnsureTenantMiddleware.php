@@ -22,7 +22,7 @@ class EnsureTenantMiddleware
         $user = $request->user();
 
         if (! $user) {
-            return response()->json(['message' => 'Unauthenticated.'], 401);
+            return $next($request);
         }
 
         $companyId = $user->company_id;

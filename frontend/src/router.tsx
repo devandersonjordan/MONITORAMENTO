@@ -14,6 +14,7 @@ import InvoicesPage from '@/pages/invoices/InvoicesPage'
 import ReportsPage from '@/pages/reports/ReportsPage'
 import AiAssistantPage from '@/pages/ai/AiAssistantPage'
 import AlertsPage from '@/pages/alerts/AlertsPage'
+import SettingsPage from '@/pages/settings/SettingsPage'
 
 export default function AppRouter() {
   return (
@@ -44,6 +45,7 @@ export default function AppRouter() {
         <Route path="/reports" element={<ReportsPage />} />
         <Route path="/ai" element={<AiAssistantPage />} />
         <Route path="/alerts" element={<AlertsPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/dashboard" replace />} />

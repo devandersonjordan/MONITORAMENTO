@@ -24,13 +24,13 @@ class RoleSeeder extends Seeder
         ];
 
         foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
+            Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'sanctum']);
         }
 
-        $admin = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+        $admin = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'sanctum']);
         $admin->syncPermissions($permissions);
 
-        $employee = Role::firstOrCreate(['name' => 'employee', 'guard_name' => 'web']);
+        $employee = Role::firstOrCreate(['name' => 'employee', 'guard_name' => 'sanctum']);
         $employee->syncPermissions([
             'clients.view', 'clients.create', 'clients.edit',
             'plants.view', 'plants.create', 'plants.edit',
@@ -40,7 +40,7 @@ class RoleSeeder extends Seeder
             'dashboard.view',
         ]);
 
-        $client = Role::firstOrCreate(['name' => 'client', 'guard_name' => 'web']);
+        $client = Role::firstOrCreate(['name' => 'client', 'guard_name' => 'sanctum']);
         $client->syncPermissions([
             'plants.view',
             'inverters.view',

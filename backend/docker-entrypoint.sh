@@ -20,7 +20,7 @@ fi
 
 php artisan config:clear 2>/dev/null || true
 
-mkdir -p storage/framework/{sessions,views,cache}
+mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache
 mkdir -p storage/app/invoices
 mkdir -p storage/app/reports
 chmod -R 775 storage bootstrap/cache 2>/dev/null || true
