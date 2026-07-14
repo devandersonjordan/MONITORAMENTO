@@ -48,27 +48,17 @@ mkdir -p backend/storage/framework/sessions backend/storage/framework/views back
 mkdir -p backend/storage/logs
 
 # ------------------------------------------
-# 3. Verificar se SSL ja existe
+# 3. Configurar nginx
 # ------------------------------------------
-SSL_EXISTS=false
-if [ -f "certbot/conf/live/$DOMAIN/fullchain.pem" ]; then
-    SSL_EXISTS=true
-    echo "[3/7] Certificado SSL encontrado."
-else
-    echo "[3/7] SSL nao encontrado. Iniciando com HTTP primeiro..."
-    # Usar config inicial sem SSL
-    cp nginx/production-initial.conf nginx/active.conf
-fi
+echo ""
+echo "[3/7] Configurando nginx (behind reverse proxy na porta 8080)..."
+cp nginx/production-behind-proxy.conf nginx/active.conf
 
 # ------------------------------------------
 # 4. Subir containers
 # ------------------------------------------
 echo ""
 echo "[4/7] Subindo containers..."
-
-if [ "$SSL_EXISTS" = true ]; then
-    cp nginx/production.conf nginx/active.conf
-fi
 
 # Usar active.conf no docker-compose
 docker compose -f docker-compose.production.yml up -d --build
@@ -105,41 +95,15 @@ docker compose -f docker-compose.production.yml exec -T app php artisan storage:
 docker compose -f docker-compose.production.yml exec -T app chmod -R 775 storage bootstrap/cache
 docker compose -f docker-compose.production.yml exec -T app chown -R www-data:www-data storage bootstrap/cache
 
-# ------------------------------------------
-# 7. SSL (se ainda nao existe)
-# ------------------------------------------
-if [ "$SSL_EXISTS" = false ]; then
-    echo ""
-    echo "============================================"
-    echo "  Obtendo certificado SSL..."
-    echo "============================================"
-    docker compose -f docker-compose.production.yml run --rm certbot \
-        certonly --webroot --webroot-path=/var/www/certbot \
-        --email andersonjorda@gmail.com \
-        --agree-tos --no-eff-email \
-        -d "$DOMAIN" -d "www.$DOMAIN"
-
-    if [ -f "certbot/conf/live/$DOMAIN/fullchain.pem" ]; then
-        echo "   SSL obtido! Trocando para config HTTPS..."
-        cp nginx/production.conf nginx/active.conf
-        docker compose -f docker-compose.production.yml restart nginx
-        echo "   HTTPS ativo!"
-    else
-        echo "   AVISO: SSL nao foi obtido. Verifique se o dominio aponta para este servidor."
-        echo "   O site continua funcionando em HTTP."
-    fi
-fi
-
 echo ""
 echo "============================================"
 echo "  Deploy concluido!"
 echo "============================================"
 echo ""
-if [ "$SSL_EXISTS" = true ] || [ -f "certbot/conf/live/$DOMAIN/fullchain.pem" ]; then
-    echo "  App: https://$DOMAIN"
-else
-    echo "  App: http://$DOMAIN"
-fi
+echo "  Container nginx escutando em: localhost:8080"
+echo "  Configure o reverse proxy do host para: http://localhost:8080"
+echo ""
+echo "  App: https://$DOMAIN"
 echo "  API: https://$DOMAIN/api"
 echo ""
 echo "  Credenciais de demo:"
