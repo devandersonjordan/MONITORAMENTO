@@ -113,7 +113,7 @@ export default function SettingsPage() {
               </div>
               <div className="space-y-2">
                 <Label>Perfil</Label>
-                <Input value={user?.role === 'admin' ? 'Administrador' : user?.role === 'manager' ? 'Gerente' : 'Cliente'} disabled className="capitalize" />
+                <Input value={user?.role === 'admin' ? 'Administrador' : user?.role === 'employee' ? 'Funcionário' : 'Cliente'} disabled className="capitalize" />
               </div>
             </div>
             <div className="flex justify-end">

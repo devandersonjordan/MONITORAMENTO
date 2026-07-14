@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { FileText, Download, Eye, Plus } from 'lucide-react'
+import { Download, Plus } from 'lucide-react'
 import { reportsApi } from '@/services/api/reports'
 import { clientsApi } from '@/services/api/clients'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'

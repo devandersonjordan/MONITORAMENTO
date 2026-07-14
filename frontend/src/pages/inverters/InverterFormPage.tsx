@@ -15,7 +15,7 @@ import { toast } from '@/components/ui/toaster'
 
 const inverterSchema = z.object({
   plant_id: z.coerce.number().min(1, 'Selecione uma usina'),
-  brand: z.string().min(1, 'Selecione a marca'),
+  brand: z.enum(['elekeeper', 'goodwe', 'sungrow', 'deye'], { required_error: 'Selecione a marca' }),
   model: z.string().optional(),
   serial_number: z.string().optional(),
   status: z.string().default('online'),
@@ -87,7 +87,7 @@ export default function InverterFormPage() {
               </div>
               <div className="space-y-2">
                 <Label>Marca *</Label>
-                <Select onValueChange={v => setValue('brand', v)} defaultValue={inverter?.brand}>
+                <Select onValueChange={v => setValue('brand', v as InverterForm['brand'])} defaultValue={inverter?.brand}>
                   <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="elekeeper">Elekeeper</SelectItem>

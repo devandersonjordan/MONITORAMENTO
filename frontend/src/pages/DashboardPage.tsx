@@ -8,7 +8,6 @@ import { dashboardApi } from '@/services/api/dashboard'
 import { chartsApi } from '@/services/api/charts'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import type { DashboardStats } from '@/types'
 import type { ApexOptions } from 'apexcharts'
 
 function formatEnergy(kwh: number): string {
