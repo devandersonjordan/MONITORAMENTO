@@ -13,7 +13,6 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->statefulApi();
         $middleware->append(SecurityHeadersMiddleware::class);
         $middleware->append(EnsureTenantMiddleware::class);
         $middleware->append(AuditLogMiddleware::class);
