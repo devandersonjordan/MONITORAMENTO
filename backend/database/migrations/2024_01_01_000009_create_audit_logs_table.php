@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('company_id')->nullable()->constrained('companies')->nullOnDelete();
             $table->string('action');
             $table->string('auditable_type');
-            $table->unsignedBigInteger('auditable_id');
+            $table->unsignedBigInteger('auditable_id')->nullable();
             $table->jsonb('old_values')->nullable();
             $table->jsonb('new_values')->nullable();
             $table->string('ip_address', 45)->nullable();

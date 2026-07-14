@@ -22,7 +22,11 @@ class AuditLogMiddleware
             && $request->user()
             && $response->isSuccessful()
         ) {
-            $this->logAction($request, $response);
+            try {
+                $this->logAction($request, $response);
+            } catch (\Throwable) {
+                // Don't break the request if audit logging fails
+            }
         }
 
         return $response;
